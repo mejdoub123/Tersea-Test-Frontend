@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "vue";
+import { useUserStore } from "../../stores/user";
 const props = defineProps({
   invitation: {
     type: Object,
@@ -7,10 +8,15 @@ const props = defineProps({
     default: {},
   },
 });
+const admin = useUserStore();
 const invitation = ref(props.invitation);
+const cancelInvitation = async () => {
+  await admin.cancelInvit(invitation.value.id);
+  invitation.value = {};
+};
 </script>
 <template>
-  <div class="col">
+  <div v-if="Object.keys(invitation).length > 0" class="col">
     <div class="row g-3 align-items-center">
       <span class="col-auto">
         <span class="avatar">E</span>
@@ -31,6 +37,7 @@ const invitation = ref(props.invitation);
           >{{ invitation.is_accepted ? "Accepted" : "Waiting" }}</span
         >
         <button
+          @click="cancelInvitation"
           v-if="!invitation.is_accepted"
           class="btn btn-sm mx-1 mt-3 btn-ghost-danger"
         >

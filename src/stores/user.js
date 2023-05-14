@@ -18,11 +18,13 @@ export const useUserStore = defineStore({
     companies: [],
     invitations: [],
     histories: [],
+    searchResults: [],
   }),
   getters: {
     allCompanies: (state) => state.companies,
     allInvitations: (state) => state.invitations,
     allHistories: (state) => state.histories,
+    allResults: (state) => state.searchResults,
   },
   actions: {
     async createCompany(company) {
@@ -127,8 +129,61 @@ export const useUserStore = defineStore({
         });
       }
     },
-    async updateCompany(company) {},
-    async cancelInvit(invit_id) {},
+    async updateCompany(company) {
+      try {
+        const { id, name, company_email, phone, address } = company;
+
+        const { data } = await axios.put(
+          `api/companies/${id}`,
+          { name, company_email, phone, address },
+          config
+        );
+        this.companies.map((company) => {
+          if (company.id === data.company.id) company = data.company;
+        });
+
+        toast.open({
+          message: `Company updated successfully !`,
+          position: "bottom-left",
+          type: "success",
+        });
+        return router.push("/admin/companies");
+      } catch (err) {
+        toast.open({
+          message: err.response.data.message,
+          position: "bottom-left",
+          type: "warning",
+        });
+      }
+    },
+    async cancelInvit(invitId) {
+      try {
+        const { data } = await axios.delete(
+          `api/invitations/${invitId}`,
+          config
+        );
+
+        toast.open({
+          message: `Invitation canceled successfully !`,
+          position: "bottom-left",
+          type: "success",
+        });
+        if (this.histories.length > 0) {
+          this.histories.push(data.history);
+        }
+
+        this.invitations = this.invitations.filter((invitation) => {
+          return invitation.id !== invitId;
+        });
+        return router.push("/admin/invitations");
+      } catch (err) {
+        toast.open({
+          message: err.response.data.message,
+          position: "bottom-left",
+          type: "warning",
+        });
+      }
+    },
     async search(searchedValue) {},
     async deleteCompany(companyId) {
       try {
@@ -141,7 +196,6 @@ export const useUserStore = defineStore({
         this.companies = this.companies.filter((company) => {
           return company.company.id !== companyId;
         });
-        console.log(this.companies);
       } catch (err) {
         toast.open({
           message: err.response.data.message,
