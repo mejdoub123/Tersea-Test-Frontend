@@ -3,7 +3,7 @@ import { useRoute } from "vue-router";
 const route = useRoute();
 </script>
 <template>
-  <div class="card-header">
+  <div v-if="route.name != 'edit-company'" class="card-header">
     <h3 class="card-title">Companies</h3>
 
     <div v-if="route.name != 'create-company'" class="card-actions">

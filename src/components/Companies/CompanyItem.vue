@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from "vue";
 import EmployeesList from "../Employees/EmployeesList.vue";
-
 const props = defineProps({
   item: {
     type: Object,
