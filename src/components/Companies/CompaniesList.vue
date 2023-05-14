@@ -1,33 +1,28 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, computed, ref } from "vue";
 import { useUserStore } from "../../stores/user";
 import CompanyItem from "./CompanyItem.vue";
+import ItemsNotFound from "../../layouts/ItemsNotFound.vue";
 const admin = useUserStore();
-const companies = ref([]);
+const companies = computed(() => admin.allCompanies);
 const loading = ref(false);
 const getCompanies = async () => {
+  if (companies.value.length > 0) return;
   loading.value = true;
-  if (admin.companies.length > 0) {
-    companies.value = admin.allCompanies;
-    loading.value = false;
-    return;
-  }
-
   await admin
     .getCompanies()
     .then(() => {
-      companies.value = admin.allCompanies;
       loading.value = false;
     })
     .catch(() => (loading.value = false));
-
-  return;
 };
 
-onMounted(() => getCompanies());
+onMounted(async () => {
+  await getCompanies();
+});
 </script>
 <template>
-  <div v-if="!loading">
+  <div v-if="!loading && companies.length > 0">
     <CompanyItem
       :key="company.company.id"
       v-for="company in companies"
@@ -35,9 +30,10 @@ onMounted(() => getCompanies());
     />
   </div>
   <img
-    v-else
-    style="margin-top: 15%; margin-left: 35%"
+    v-else-if="loading && companies.length === 0"
+    style="margin-top: 15%; margin-left: 43%; height: 200px; width: 200px"
     src="../../assets/Loader.svg"
     alt="Loader"
   />
+  <ItemsNotFound v-else items-name="Company" />
 </template>

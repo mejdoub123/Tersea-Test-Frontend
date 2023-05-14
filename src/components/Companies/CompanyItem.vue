@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from "vue";
 import EmployeesList from "../Employees/EmployeesList.vue";
+import DeleteConfirmation from "../../layouts/Modals/DeleteConfirmation.vue";
+import Invite from "../../layouts/Modals/Invite.vue";
 const props = defineProps({
   item: {
     type: Object,
@@ -65,7 +67,38 @@ const item = ref(props.item);
             </svg>
             Edit
           </RouterLink>
-          <button type="button" class="btn bg-danger-lt btn-icon mx-1">
+          <button
+            data-bs-target="#modal-invit"
+            data-bs-toggle="modal"
+            type="button"
+            class="btn bg-cyan-lt mx-1"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="icon icon-tabler icon-tabler-send"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+              <path d="M10 14l11 -11"></path>
+              <path
+                d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5"
+              ></path>
+            </svg>
+            Invite Employee
+          </button>
+          <button
+            :data-bs-target="`#modal-delete-company-${item.company.id}`"
+            data-bs-toggle="modal"
+            type="button"
+            class="btn bg-danger-lt btn-icon mx-1"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="icon icon-tabler icon-tabler-trash"
@@ -182,5 +215,10 @@ const item = ref(props.item);
         </div>
       </div>
     </div>
+    <DeleteConfirmation
+      :company-name="item.company.name"
+      :company-id="item.company.id"
+    />
+    <Invite :company-id="item.company.id" />
   </div>
 </template>

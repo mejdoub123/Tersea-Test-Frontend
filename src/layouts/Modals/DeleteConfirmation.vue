@@ -1,7 +1,31 @@
+<script setup>
+import { ref } from "vue";
+import { useUserStore } from "../../stores/user";
+
+const props = defineProps({
+  companyName: {
+    type: String,
+    required: true,
+    default: "",
+  },
+  companyId: {
+    type: String,
+    required: true,
+    default: "",
+  },
+});
+
+const user = useUserStore();
+const companyName = ref(props.companyName);
+const companyId = ref(props.companyId);
+const deleteCompany = async () => {
+  await user.deleteCompany(companyId.value);
+};
+</script>
 <template>
   <div
     class="modal modal-blur fade"
-    id="modal-delete-company"
+    :id="`modal-delete-company-${companyId}`"
     tabindex="-1"
     style="display: none"
     aria-hidden="true"
@@ -16,7 +40,6 @@
         ></button>
         <div class="modal-status bg-danger"></div>
         <div class="modal-body text-center py-4">
-          <!-- Download SVG icon from http://tabler-icons.io/i/alert-triangle -->
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="icon mb-2 text-danger icon-lg"
@@ -37,26 +60,26 @@
           </svg>
           <h3>Are you sure?</h3>
           <div class="text-muted">
-            Do you really want to remove 84 files? What you've done cannot be
-            undone.
+            Do you really want to remove {{ companyName }}? What you've done
+            cannot be undone.
           </div>
         </div>
         <div class="modal-footer">
           <div class="w-100">
             <div class="row">
               <div class="col">
-                <a href="#" class="btn w-100" data-bs-dismiss="modal">
+                <button class="btn w-100" data-bs-dismiss="modal">
                   Cancel
-                </a>
+                </button>
               </div>
               <div class="col">
-                <a
-                  href="#"
+                <button
+                  @click="deleteCompany"
                   class="btn btn-danger w-100"
                   data-bs-dismiss="modal"
                 >
-                  Delete 84 items
-                </a>
+                  Delete
+                </button>
               </div>
             </div>
           </div>
@@ -65,26 +88,3 @@
     </div>
   </div>
 </template>
-<script setup>
-import { ref } from "vue";
-
-const props = defineProps({
-  show: {
-    type: Boolean,
-    required: true,
-    default: false,
-  },
-  title: {
-    type: String,
-    required: true,
-    default: "",
-  },
-  message: {
-    type: String,
-    required: true,
-    default: "",
-  },
-});
-const emits = defineEmits(["cancelDelete", "confirmDelete"]);
-const show = ref(props.show);
-</script>

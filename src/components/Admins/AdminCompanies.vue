@@ -28,7 +28,10 @@ const route = useRoute();
       </RouterLink>
     </div>
   </div>
-  <div class="card-body">
+  <div
+    class="card-body list-group list-group-flush overflow-auto"
+    style="max-height: 35rem"
+  >
     <RouterView />
   </div>
 </template>

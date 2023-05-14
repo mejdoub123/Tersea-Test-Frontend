@@ -47,20 +47,6 @@ const router = createRouter({
               ],
             },
             {
-              path: "employees",
-              name: "admin-employees",
-              component: () =>
-                import("../components/Admins/AdminEmployees.vue"),
-              children: [
-                {
-                  path: "invite",
-                  name: "invite-employee",
-                  component: () =>
-                    import("../components/Employees/InvitEmployee.vue"),
-                },
-              ],
-            },
-            {
               path: "invitations",
               name: "admin-invitations",
               component: () =>
