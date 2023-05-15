@@ -18,7 +18,7 @@ export const useUserStore = defineStore({
     companies: [],
     invitations: [],
     histories: [],
-    searchResults: [],
+    searchResults: {},
   }),
   getters: {
     allCompanies: (state) => state.companies,
@@ -184,7 +184,22 @@ export const useUserStore = defineStore({
         });
       }
     },
-    async search(searchedValue) {},
+    async search(searchedValue) {
+      try {
+        const { data } = await axios.post(
+          "api/search",
+          { searched_value: searchedValue },
+          config
+        );
+        this.searchResults = data.results;
+      } catch (err) {
+        toast.open({
+          message: err.response.data.message,
+          position: "bottom-left",
+          type: "warning",
+        });
+      }
+    },
     async deleteCompany(companyId) {
       try {
         await axios.delete(`api/companies/${companyId}`, config);
